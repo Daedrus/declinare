@@ -116,6 +116,10 @@ def quiz():
         languages=LANG_FILES
     )
 
+@app.route("/debug")
+def debug():
+    return "Hello from Flask!"
+
 if __name__ == "__main__":
     app.run(debug=True)
 
