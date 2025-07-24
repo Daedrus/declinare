@@ -6,7 +6,8 @@ import random
 import re
 
 print("\n=== FILES DEPLOYED TO RENDER ===")
-for root, dirs, files in os.walk("."):
+for root, dirs, files in os.walk(".", topdown=True):
+    dirs[:] = [d for d in dirs if d not in {".venv", "__pycache__", ".git"}]
     for file in files:
         print(os.path.join(root, file))
 print("================================\n")
