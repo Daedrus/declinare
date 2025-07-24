@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Noun Quiz</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        input[type="text"] { padding: 0.5rem; width: 300px; }
+        select { padding: 0.4rem; margin-left: 1rem; }
+        button { padding: 0.5rem 1rem; margin-top: 1rem; }
+        .correct { color: green; }
+        .incorrect { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Noun Quiz</h1>
+
+    <form method="post">
+      <label for="lang">Language:</label>
+      <select name="lang" onchange="this.form.submit()">
+        {% for code, path in languages.items() %}
+          <option value="{{ code }}" {% if code == selected_lang %}selected{% endif %}>
+            {{ languages[code].name }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+
+    <p><strong>What is the {{ tags }} form of <em>{{ word }}</em>?</strong></p>
+    <p> ( <em>{{senses}}</em> ) </p>
+
+    {% if feedback %}
+        {% if is_correct %}
+            <p class="correct">✅ Correct!</p>
+        {% else %}
+            <p class="incorrect">❌ Incorrect. You answered "{{ user_answer }}", the correct answer is: <strong>{{ correct_answer }}</strong></p>
+        {% endif %}
+        <form action="{{ url_for('quiz') }}" method="get">
+            <input type="hidden" name="lang" value="{{ selected_lang }}">
+            <button>Next Question</button>
+        </form>
+    {% else %}
+        <form method="post">
+            <input type="hidden" name="lang" value="{{ selected_lang }}">
+            <input type="hidden" name="word" value="{{ word }}">
+            <input type="hidden" name="tags" value="{{ tags }}">
+            <input type="hidden" name="senses" value="{{ senses }}">
+            <input type="hidden" name="correct_answer" value="{{ correct_answer }}">
+            <input type="text" name="user_answer" autocomplete="off" autofocus>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+    {% endif %}
+</body>
+</html>
+
