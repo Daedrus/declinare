@@ -1,8 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for
 import itertools
 import json
+import os
 import random
 import re
+
+print("\n=== FILES DEPLOYED TO RENDER ===")
+for root, dirs, files in os.walk("."):
+    for file in files:
+        print(os.path.join(root, file))
+print("================================\n")
 
 app = Flask(__name__)
 
