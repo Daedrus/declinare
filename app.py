@@ -5,13 +5,6 @@ import os
 import random
 import re
 
-print("\n=== FILES DEPLOYED TO RENDER ===")
-for root, dirs, files in os.walk(".", topdown=True):
-    dirs[:] = [d for d in dirs if d not in {".venv", "__pycache__", ".git"}]
-    for file in files:
-        print(os.path.join(root, file))
-print("================================\n")
-
 app = Flask(__name__)
 
 LANG_FILES = {
@@ -124,10 +117,6 @@ def quiz():
         languages=LANG_FILES
     )
 
-@app.route("/debug")
-def debug():
-    return "Hello from Flask!"
-
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=10000)
+    app.run(debug=True, host='0.0.0.0', port=int(os.getenv('PORT')))
 
