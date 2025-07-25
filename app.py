@@ -3,8 +3,6 @@ import itertools
 import json
 import os
 import random
-import re
-import time
 
 app = Flask(__name__)
 
