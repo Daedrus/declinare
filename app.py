@@ -15,9 +15,9 @@ import threading
 app = Flask(__name__)
 
 LANG_FILES = {
-    "sv": {"name": "Swedish", "file": "data/sv.jsonl", "lines": 300280},
-    "ro": {"name": "Romanian", "file": "data/ro.jsonl", "lines": 126022},
-    "sh": {"name": "Serbo-Croatian", "file": "data/sh.jsonl", "lines": 66848}
+    "sv": {"name": "Swedish", "file": "data/sv_nouns.jsonl", "lines": 37484},
+    "ro": {"name": "Romanian", "file": "data/ro_nouns.jsonl", "lines": 55202},
+    "sh": {"name": "Serbo-Croatian", "file": "data/sh_nouns.jsonl", "lines": 29093}
 }
 
 EXCLUDED_TAGS = {"table-tags", "inflection-template", "archaic", "dated", "obsolete"}
@@ -67,10 +67,6 @@ def profile_route(f):
         return result
     return decorated_function
 
-@profile_function("is_form_of")
-def is_form_of(entry):
-    return any("form_of" in sense for sense in entry.get("senses", []))
-
 @profile_function("contains_cyrillic")
 def contains_cyrillic(text):
     return bool(re.search(r'[\u0400-\u04FF]', text))
@@ -118,8 +114,6 @@ def get_random_noun_entry(lang_code, max_tries=50):
                         validation_start = time.time()
                         if (
                             entry.get("lang_code") == lang_code
-                            and entry.get("pos") == "noun"
-                            and not is_form_of(entry)
                             and not contains_cyrillic(entry.get("word", ""))
                         ):
                             decls = get_valid_declensions(entry)
