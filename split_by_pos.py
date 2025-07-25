@@ -1,4 +1,5 @@
 import json
+import re
 
 def split_by_pos(input_path, lang_code):
     output_files = {
@@ -6,6 +7,9 @@ def split_by_pos(input_path, lang_code):
         "verb": open(f"{lang_code}_verbs.jsonl", "w", encoding="utf-8"),
         "adj": open(f"{lang_code}_adjs.jsonl", "w", encoding="utf-8"),
     }
+
+    def contains_cyrillic(text):
+        return bool(re.search(r'[\u0400-\u04FF]', text or ""))
 
     def is_form_of(entry):
         return any("form_of" in sense for sense in entry.get("senses", []))
@@ -18,7 +22,8 @@ def split_by_pos(input_path, lang_code):
                 if (
                     entry.get("lang_code") == lang_code and
                     entry.get("pos") in output_files and
-                    not is_form_of(entry)
+                    not is_form_of(entry) and
+                    not contains_cyrillic(entry.get("word", ""))
                 ):
                     json.dump(entry, output_files[entry["pos"]], ensure_ascii=False)
                     output_files[entry["pos"]].write("\n")
