@@ -16,9 +16,6 @@ LANG_FILES = {
 
 EXCLUDED_TAGS = {"table-tags", "inflection-template", "archaic", "dated", "obsolete"}
 
-def contains_cyrillic(text):
-    return bool(re.search(r'[\u0400-\u04FF]', text))
-
 def get_valid_declensions(entry):
     return [
         form for form in entry.get("forms", [])
@@ -54,13 +51,10 @@ def get_random_noun_entry(lang_code, max_tries=50):
                     if i == line_num:
                         entry = json.loads(line)
 
-                        if (
-                            entry.get("lang_code") == lang_code
-                            and not contains_cyrillic(entry.get("word", ""))
-                        ):
-                            decls = get_valid_declensions(entry)
-                            if decls:
-                                return entry, decls
+                        decls = get_valid_declensions(entry)
+                        if decls:
+                            return entry, decls
+
                         break
         except Exception as e:
             print(f"Error on attempt {attempt + 1}: {e}")
