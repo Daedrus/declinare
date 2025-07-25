@@ -10,8 +10,8 @@ app = Flask(__name__)
 
 LANG_FILES = {
     "sv": {"name": "Swedish", "file": "data/sv_nouns.jsonl", "lines": 37484},
-    "ro": {"name": "Romanian", "file": "data/ro_nouns.jsonl", "lines": 55202},
-    "sh": {"name": "Serbo-Croatian", "file": "data/sh_nouns.jsonl", "lines": 29093}
+    "ro": {"name": "Romanian", "file": "data/ro_nouns.jsonl", "lines": 55167},
+    "sh": {"name": "Serbo-Croatian", "file": "data/sh_nouns.jsonl", "lines": 16107}
 }
 
 EXCLUDED_TAGS = {"table-tags", "inflection-template", "archaic", "dated", "obsolete"}
