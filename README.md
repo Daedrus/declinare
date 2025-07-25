@@ -11,6 +11,10 @@ The dictionaries currently in use come from <https://kaikki.org/index.html>:
 
 Those dictionaries, in turn, are based on <https://en.wiktionary.org/>.
 
+The dictionaries are parsed by the `split_by_pos.py` script in order to
+create separate smaller dictionaries containing only nouns, verbs and
+adjectives. It is these smaller dictionaries which are used by the app.
+
 ## Running locally
 If you want to run the app locally then you can use the following commands:
 * Set up a separate Python virtual environment and install all dependencies in it
