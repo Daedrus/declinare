@@ -1,6 +1,8 @@
 import json
 import re
 
+EXCLUDED_TAGS = {"table-tags", "inflection-template", "archaic", "dated", "obsolete", "alternative"}
+
 def split_by_pos(input_path, lang_code):
     output_files = {
         "noun": open(f"{lang_code}_nouns.jsonl", "w", encoding="utf-8"),
@@ -25,7 +27,31 @@ def split_by_pos(input_path, lang_code):
                     not is_form_of(entry) and
                     not contains_cyrillic(entry.get("word", ""))
                 ):
-                    json.dump(entry, output_files[entry["pos"]], ensure_ascii=False)
+                    # Filter valid forms
+                    valid_forms = [
+                        form for form in entry.get("forms", [])
+                        if not set(form.get("tags", [])) & EXCLUDED_TAGS
+                    ]
+
+                    # Skip if no valid forms remain
+                    if not valid_forms:
+                        continue
+
+                    # Keep only the needed fields
+                    trimmed = {
+                        "word": entry.get("word"),
+                        "lang_code": entry.get("lang_code"),
+                        "pos": entry.get("pos"),
+                        "forms": valid_forms,
+                        "head_templates": entry.get("head_templates", []),
+                        "senses": [
+                            {"glosses": sense.get("glosses", [])}
+                            for sense in entry.get("senses", [])
+                            if "glosses" in sense
+                        ]
+                        }
+
+                    json.dump(trimmed, output_files[entry["pos"]], ensure_ascii=False)
                     output_files[entry["pos"]].write("\n")
             except json.JSONDecodeError:
                 continue
