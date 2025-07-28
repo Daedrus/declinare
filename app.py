@@ -17,15 +17,12 @@ LANG_FILES = {
     "sh": {"name": "Serbo-Croatian", "file": "data/sh_nouns.jsonl", "lines": 16107}
 }
 
-EXCLUDED_TAGS = {"table-tags", "inflection-template", "archaic", "dated", "obsolete"}
-
 def get_valid_declensions(entry):
     return [
         form for form in entry.get("forms", [])
         if (
             form.get("source") == "declension"
             and "form" in form
-            and not set(form.get("tags", [])) & EXCLUDED_TAGS
             and form.get("form") != '-'
         )
     ]
@@ -35,7 +32,6 @@ def get_senses(entry):
     return list(itertools.chain.from_iterable(
         sense.get("glosses", [])
         for sense in entry.get("senses", [])
-        if not set(sense.get("tags", [])) & EXCLUDED_TAGS
     ))
 
 def get_random_noun_entry(lang_code, max_tries=50):
