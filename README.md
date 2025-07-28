@@ -25,6 +25,6 @@ If you want to run the app locally then you can use the following commands:
   ```
 * Run the web server
   ```
-  ~/git/declinare > gunicorn app:app
+  ~/git/declinare > SECRET_KEY="aaaa" gunicorn app:app
   ```
 * Use your web browser to go to the address mentioned in `gunicorn`'s output
