@@ -1,63 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Noun Quiz</title>
-    <style>
-        body {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-          margin: 0;
-          font-family: sans-serif;
-          background: #fdfdfd;
-        }
+  <meta charset="UTF-8">
+  <title>Noun Quiz</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+      background: #fdfdfd;
+    }
 
-        .container {
-          text-align: center;
-          padding: 2rem;
-          max-width: 600px;
-          width: 100%;
-        }
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+    }
 
-        input[type="text"], select {
-          padding: 0.5rem;
-          width: 80%;
-          max-width: 300px;
-          margin: 1rem 0;
-        }
+    input[type="text"], select {
+      padding: 0.5rem;
+      width: 80%;
+      max-width: 300px;
+      margin: 1rem 0;
+    }
 
-        button {
-          padding: 0.5rem 1.2rem;
-          font-size: 1rem;
-          margin-top: 1rem;
-        }
+    button {
+      padding: 0.5rem 1.2rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
 
-        .correct { color: green; }
-        .incorrect { color: red; }
+    .correct { color: green; }
+    .incorrect { color: red; }
 
-        .language-select {
-          position: absolute;
-          top: 1rem;
-          right: 1rem;
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          font-size: 1.2rem;
-        }
+    .language-select {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 1.2rem;
+    }
 
-        .language-select select {
-          padding: 0.3rem 0.6rem;
-          font-size: 0.9rem;
-          border-radius: 4px;
-        }
+    .language-select select {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      border-radius: 4px;
+    }
 
-        .lang-label {
-          cursor: default;
-          font-size: 1.2rem;
-        }
-    </style>
+    .lang-label {
+      cursor: default;
+      font-size: 1.2rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #121212;
+        color: #f5f5f5;
+      }
+
+      input[type="text"],
+      select {
+        background-color: #1e1e1e;
+        color: #f5f5f5;
+        border: 1px solid #555;
+      }
+
+      button {
+        background-color: #333;
+        color: #f5f5f5;
+        border: 1px solid #555;
+      }
+
+      .tooltip .tooltiptext {
+        background-color: #333;
+        color: #f5f5f5;
+        border-color: #555;
+      }
+
+      .correct {
+        color: #8ef58d;
+      }
+
+      .incorrect {
+        color: #ff6b6b;
+      }
+
+      a {
+        color: #82cfff;
+      }
+
+      .container {
+        background-color: transparent;
+      }
+    }
+  </style>
 </head>
 <body>
 
