@@ -3,6 +3,16 @@ import re
 
 EXCLUDED_TAGS = {"table-tags", "inflection-template", "archaic", "dated", "obsolete", "alternative"}
 
+def is_all_senses_excluded(entry):
+    senses = entry.get("senses", [])
+    if not senses:
+        return False  # keep entries with no senses
+    for sense in senses:
+        tags = set(sense.get("tags", []))
+        if not tags & EXCLUDED_TAGS:
+            return False  # found at least one normal sense
+    return True  # all senses are excluded
+
 def split_by_pos(input_path, lang_code):
     output_files = {
         "noun": open(f"{lang_code}_nouns.jsonl", "w", encoding="utf-8"),
@@ -22,10 +32,11 @@ def split_by_pos(input_path, lang_code):
                 entry = json.loads(line)
 
                 if (
-                    entry.get("lang_code") == lang_code and
-                    entry.get("pos") in output_files and
-                    not is_form_of(entry) and
-                    not contains_cyrillic(entry.get("word", ""))
+                    entry.get("lang_code") == lang_code
+                    and entry.get("pos") in output_files
+                    and not is_form_of(entry)
+                    and not contains_cyrillic(entry.get("word", ""))
+                    and not is_all_senses_excluded(entry)
                 ):
                     # Filter valid forms
                     valid_forms = [
