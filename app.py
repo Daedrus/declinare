@@ -26,6 +26,7 @@ def get_valid_declensions(entry):
             form.get("source") == "declension"
             and "form" in form
             and not set(form.get("tags", [])) & EXCLUDED_TAGS
+            and form.get("form") != '-'
         )
     ]
 

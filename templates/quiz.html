@@ -37,37 +37,6 @@
         .correct { color: green; }
         .incorrect { color: red; }
 
-        .tooltip {
-          position: relative;
-          display: inline-block;
-          cursor: help;
-          font-size: 0.9em;
-        }
-
-        .tooltip .tooltiptext {
-          visibility: hidden;
-          width: 260px;
-          background-color: #f9f9f9;
-          color: #000;
-          text-align: left;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          padding: 8px;
-          position: absolute;
-          z-index: 1;
-          bottom: 125%;
-          left: 50%;
-          margin-left: -130px;
-          opacity: 0;
-          transition: opacity 0.2s;
-          font-size: 0.85em;
-        }
-
-        .tooltip:hover .tooltiptext {
-          visibility: visible;
-          opacity: 1;
-        }
-
         .language-select {
           position: absolute;
           top: 1rem;
@@ -114,15 +83,7 @@
       <p>🔥 Current streak: <strong>{{ streak }}</strong></p>
     {% endif %}
 
-    <p>
-      <strong>What is the {{ tags }} form of <em>{{ word }}</em>?</strong>
-        <span class="tooltip">ℹ️
-          <span class="tooltiptext">
-            Keep in mind that some nouns may lack singular or plural forms.
-            In those cases, the answer is a simple dash: “-”.
-          </span>
-        </span>
-    </p>
+    <p> <strong>What is the {{ tags }} form of <em>{{ word }}</em>?</strong> </p>
     <p> ( <em>{{senses}}</em> ) </p>
 
     {% if feedback %}
