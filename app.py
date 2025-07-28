@@ -67,6 +67,7 @@ def quiz():
 
     if lang not in LANG_FILES:
         lang = "sv"
+    info = LANG_FILES.get(lang)
 
     if request.method == "POST":
         if "word" in request.form and "correct_answer" in request.form:
@@ -75,6 +76,7 @@ def quiz():
             tags = request.form["tags"]
             senses = request.form["senses"]
             user_answer = request.form["user_answer"].strip()
+            wiktionary_url = f"https://en.wiktionary.org/wiki/{word}#{info['name']}"
 
             is_correct = user_answer.lower() == correct_answer.lower()
 
@@ -87,6 +89,7 @@ def quiz():
                 feedback=True,
                 is_correct=is_correct,
                 user_answer=user_answer,
+                wiktionary_url=wiktionary_url,
                 selected_lang=lang,
                 languages=LANG_FILES
             )

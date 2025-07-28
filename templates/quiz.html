@@ -35,6 +35,10 @@
         {% else %}
             <p class="incorrect">❌ Incorrect. You answered "{{ user_answer }}", the correct answer is: <strong>{{ correct_answer }}</strong></p>
         {% endif %}
+        <p>
+          📖 For more details see:
+          <a href="{{ wiktionary_url }}" target="_blank">{{ wiktionary_url }}</a>
+        </p>
         <form action="{{ url_for('quiz') }}" method="get">
             <input type="hidden" name="lang" value="{{ selected_lang }}">
             <button>Next Question</button>
