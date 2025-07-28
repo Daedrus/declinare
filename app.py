@@ -1,10 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, session, url_for
 import itertools
 import json
 import os
 import random
+import sys
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY")
+if not app.secret_key:
+    print("❌ ERROR: SECRET_KEY environment variable is not set.")
+    sys.exit(1)
 
 LANG_FILES = {
     "sv": {"name": "Swedish", "file": "data/sv_nouns.jsonl", "lines": 37484},
@@ -79,6 +84,10 @@ def quiz():
             wiktionary_url = f"https://en.wiktionary.org/wiki/{word}#{info['name']}"
 
             is_correct = user_answer.lower() == correct_answer.lower()
+            if is_correct:
+                session["streak"] = session.get("streak", 0) + 1
+            else:
+                session["streak"] = 0
 
             return render_template(
                 "quiz.html",
@@ -91,10 +100,12 @@ def quiz():
                 user_answer=user_answer,
                 wiktionary_url=wiktionary_url,
                 selected_lang=lang,
-                languages=LANG_FILES
+                languages=LANG_FILES,
+                streak=session.get("streak", 0)
             )
         else:
             # User submitted only a language switch — refresh question
+            session["streak"] = 0
             return redirect(url_for("quiz", lang=lang))
 
     entry, declensions = get_random_noun_entry(lang)
@@ -112,7 +123,8 @@ def quiz():
         correct_answer=form["form"],
         feedback=False,
         selected_lang=lang,
-        languages=LANG_FILES
+        languages=LANG_FILES,
+        streak=session.get("streak", 0)
     )
 
 if __name__ == "__main__":

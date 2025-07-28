@@ -47,6 +47,10 @@
 <body>
     <h1>Noun Quiz</h1>
 
+    {% if streak is defined %}
+      <p>🔥 Current streak: <strong>{{ streak }}</strong></p>
+    {% endif %}
+
     <form method="post">
       <label for="lang">Language:</label>
       <select name="lang" onchange="this.form.submit()">
