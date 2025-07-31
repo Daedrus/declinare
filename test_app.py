@@ -16,6 +16,11 @@ def test_quiz_page_loads(client):
     assert response.status_code == 200
     assert b"Noun Quiz" in response.data
 
+def test_submit_without_quiz_redirects(client):
+    response = client.post("/submit", data={"user_answer": "dummy"}, follow_redirects=False)
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/quiz")
+
 def test_correct_answers_set_streak(client):
     # First load quiz and grab session
     client.get("/quiz")
