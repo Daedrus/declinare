@@ -88,6 +88,7 @@ def quiz():
         "word": entry.get("word"),
         "tags": tags,
         "senses": senses,
+        "correct_answer": form["form"]
     }
 
     return render_template(
@@ -95,7 +96,6 @@ def quiz():
         word=entry.get("word"),
         tags=", ".join(tags),
         senses=", ".join(senses),
-        correct_answer=form["form"],
         feedback=False,
         selected_lang=session["lang"],
         languages=LANG_FILES,
@@ -110,7 +110,7 @@ def submit_answer():
         return redirect(url_for("quiz"))
 
     user_answer = request.form["user_answer"].strip()
-    correct_answer = request.form["correct_answer"]
+    correct_answer = quiz["correct_answer"]
 
     is_correct = user_answer.lower() == correct_answer.lower()
     if is_correct:
@@ -119,6 +119,8 @@ def submit_answer():
         session["streak"] = 0
 
     wiktionary_url = f"https://en.wiktionary.org/wiki/{quiz['word']}#{LANG_FILES[session.get('lang', 'sv')]['name']}"
+
+    session.pop("quiz", None)
 
     return render_template(
         "quiz.html",
