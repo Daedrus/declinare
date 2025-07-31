@@ -63,66 +63,83 @@ def get_random_noun_entry(lang_code, max_tries=50):
     print(f"Failed to find valid entry after {max_tries} attempts")
     return None, []
 
-@app.route("/", methods=["GET", "POST"])
+
+@app.route("/quiz", methods=["GET"])
 def quiz():
-    lang = request.form.get("lang") or request.args.get("lang") or "sv"
+    new_lang = request.args.get("lang")
+    current_lang = session.get("lang", "sv")
 
-    if lang not in LANG_FILES:
-        lang = "sv"
-    info = LANG_FILES.get(lang)
+    # If language is explicitly changed, reset the streak
+    if new_lang and new_lang != current_lang:
+        session["lang"] = new_lang
+        session["streak"] = 0
+    else:
+        session["lang"] = current_lang
 
-    if request.method == "POST":
-        if "word" in request.form and "correct_answer" in request.form:
-            word = request.form["word"]
-            correct_answer = request.form["correct_answer"]
-            tags = request.form["tags"]
-            senses = request.form["senses"]
-            user_answer = request.form["user_answer"].strip()
-            wiktionary_url = f"https://en.wiktionary.org/wiki/{word}#{info['name']}"
-
-            is_correct = user_answer.lower() == correct_answer.lower()
-            if is_correct:
-                session["streak"] = session.get("streak", 0) + 1
-            else:
-                session["streak"] = 0
-
-            return render_template(
-                "quiz.html",
-                word=word,
-                tags=tags,
-                senses=senses,
-                correct_answer=correct_answer,
-                feedback=True,
-                is_correct=is_correct,
-                user_answer=user_answer,
-                wiktionary_url=wiktionary_url,
-                selected_lang=lang,
-                languages=LANG_FILES,
-                streak=session.get("streak", 0)
-            )
-        else:
-            # User submitted only a language switch — refresh question
-            session["streak"] = 0
-            return redirect(url_for("quiz", lang=lang))
-
-    entry, declensions = get_random_noun_entry(lang)
+    entry, declensions = get_random_noun_entry(session["lang"])
     if not entry or not declensions:
         return "No valid entry found", 500
 
     form = random.choice(declensions)
-    tags = ", ".join(form.get("tags", []))
-    senses = ", ".join(get_senses(entry))
+    tags = form.get("tags", [])
+    senses = get_senses(entry)
+
+    session["quiz"] = {
+        "word": entry.get("word"),
+        "tags": tags,
+        "senses": senses,
+    }
+
     return render_template(
         "quiz.html",
         word=entry.get("word"),
-        tags=tags,
-        senses=senses,
+        tags=", ".join(tags),
+        senses=", ".join(senses),
         correct_answer=form["form"],
         feedback=False,
-        selected_lang=lang,
+        selected_lang=session["lang"],
         languages=LANG_FILES,
         streak=session.get("streak", 0)
     )
+
+
+@app.route("/submit", methods=["POST"])
+def submit_answer():
+    quiz = session.get("quiz")
+    if not quiz:
+        return redirect(url_for("quiz"))
+
+    user_answer = request.form["user_answer"].strip()
+    correct_answer = request.form["correct_answer"]
+
+    is_correct = user_answer.lower() == correct_answer.lower()
+    if is_correct:
+        session["streak"] = session.get("streak", 0) + 1
+    else:
+        session["streak"] = 0
+
+    wiktionary_url = f"https://en.wiktionary.org/wiki/{quiz['word']}#{LANG_FILES[session.get('lang', 'sv')]['name']}"
+
+    return render_template(
+        "quiz.html",
+        word=quiz["word"],
+        tags=", ".join(quiz["tags"]),
+        senses=", ".join(quiz["senses"]),
+        correct_answer=correct_answer,
+        feedback=True,
+        is_correct=is_correct,
+        user_answer=user_answer,
+        wiktionary_url=wiktionary_url,
+        selected_lang=session.get('lang', 'sv'),
+        languages=LANG_FILES,
+        streak=session.get("streak", 0)
+    )
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return redirect(url_for("quiz"))
+
 
 if __name__ == "__main__":
     print("Starting declinare")
