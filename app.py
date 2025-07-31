@@ -7,7 +7,7 @@ import sys
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
-if not app.secret_key:
+if not app.secret_key and __name__ == "__main__":
     print("❌ ERROR: SECRET_KEY environment variable is not set.")
     sys.exit(1)
 
