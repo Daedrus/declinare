@@ -43,19 +43,111 @@
       right: 1rem;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.8rem;
       font-size: 1.2rem;
+    }
+
+    .language-select form {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
     }
 
     .language-select select {
       padding: 0.3rem 0.6rem;
       font-size: 0.9rem;
       border-radius: 4px;
+      width: auto;
+      margin: 0;
+      position: relative;
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-tooltip {
+      opacity: 0;
+      position: absolute;
+      top: 125%;
+      right: 0;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+      min-width: 120px;
+      text-align: left;
+    }
+
+    .select-wrapper:hover .select-tooltip {
+      opacity: 1;
     }
 
     .lang-label {
       cursor: default;
       font-size: 1.2rem;
+      position: relative;
+    }
+
+    .lang-tooltip {
+      opacity: 0;
+      position: absolute;
+      top: 125%;
+      right: 0;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+      min-width: 120px;
+      text-align: left;
+    }
+
+    .lang-label:hover .lang-tooltip {
+      opacity: 1;
+    }
+
+    .checkbox-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+      transform: scale(1.1);
+      accent-color: #3498db;
+      width: auto;
+      margin: 0;
+    }
+
+    .checkbox-tooltip {
+      opacity: 0;
+      position: absolute;
+      top: 125%;
+      right: 0;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+      min-width: 200px;
+      text-align: left;
+    }
+
+    .checkbox-wrapper:hover .checkbox-tooltip {
+      opacity: 1;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -98,6 +190,13 @@
       .container {
         background-color: transparent;
       }
+
+      .checkbox-tooltip,
+      .lang-tooltip,
+      .select-tooltip {
+        background: rgba(255, 255, 255, 0.9);
+        color: #000;
+      }
     }
   </style>
 </head>
@@ -107,6 +206,9 @@
     <form method="get" action="/quiz" title="Change language">
       <label for="lang" class="lang-label" title="Change language">
         🌐
+        <div class="lang-tooltip">
+          Change language
+        </div>
       </label>
       <select name="lang" id="lang" onchange="this.form.submit()" title="Change language">
         {% for code, info in languages.items() %}
@@ -115,6 +217,15 @@
         </option>
         {% endfor %}
       </select>
+      <div class="checkbox-wrapper">
+        <label>
+          🔝
+          <input type="checkbox" name="top500" onchange="this.form.submit()" {% if top500 %}checked{% endif %}>
+        </label>
+        <div class="checkbox-tooltip">
+          Pull from top 500 most frequently used words (instead of the entire dictionary)
+        </div>
+      </div>
     </form>
   </div>
 
@@ -140,6 +251,9 @@
         </p>
         <form action="{{ url_for('quiz') }}" method="get">
             <input type="hidden" name="lang" value="{{ selected_lang }}">
+                {% if top500 %}
+                <input type="hidden" name="top500" value="on">
+                {% endif %}
             <button>Next Question</button>
         </form>
     {% else %}
@@ -156,4 +270,3 @@
   </div>
 </body>
 </html>
-

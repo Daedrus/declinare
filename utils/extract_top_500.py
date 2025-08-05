@@ -85,7 +85,7 @@ def load_filtered_entries(jsonl_path, blacklist):
             for form in entry.get("forms", []):
                 if form.get("source") != "declension":
                     continue
-                # This will exclude tags that are archaic or dated
+                # This will exclude forms that are archaic or dated
                 tags = set(form.get("tags", []))
                 if tags & EXCLUDED_TAGS:
                     continue
@@ -102,16 +102,33 @@ def load_filtered_entries(jsonl_path, blacklist):
             if not valid_forms:
                 continue  # Skip entries with no valid forms
 
+            # Keep only the needed fields in the resulting .jsonl
+            trimmed_entry = {
+                "word": entry.get("word"),
+                "lang_code": entry.get("lang_code"),
+                "pos": entry.get("pos"),
+                "forms": [
+                    form for form in entry.get("forms", [])
+                    if not set(form.get("tags", [])) & EXCLUDED_TAGS
+                ],
+                "head_templates": entry.get("head_templates", []),
+                "senses": [
+                    {"glosses": sense.get("glosses", [])}
+                    for sense in entry.get("senses", [])
+                    if "glosses" in sense
+                ]
+            }
+
             logger.debug(f"Adding {base_word} and its forms to form_to_entry")
             if base_word not in form_to_entry:
                 form_to_entry[base_word] = []
-            if entry not in form_to_entry[base_word]:
-                form_to_entry[base_word].append(entry)
+            if trimmed_entry not in form_to_entry[base_word]:
+                form_to_entry[base_word].append(trimmed_entry)
             for form_word in valid_forms:
                 if form_word not in form_to_entry:
                     form_to_entry[form_word] = []
-                if entry not in form_to_entry[form_word]:
-                    form_to_entry[form_word].append(entry)
+                if trimmed_entry not in form_to_entry[form_word]:
+                    form_to_entry[form_word].append(trimmed_entry)
 
     return form_to_entry
 
@@ -162,18 +179,18 @@ if __name__ == '__main__':
     generate_top_entries(
             lang_code='ro',
             input_jsonl_path='./data/ro.jsonl',
-            output_path='top500_ro_nouns.jsonl',
+            output_path='ro_nouns_top500.jsonl',
             blacklist_path='./data/top500_ro_nouns_blacklist.txt',
             limit=500)
     generate_top_entries(
             lang_code='sv',
             input_jsonl_path='./data/sv.jsonl',
-            output_path='top500_sv_nouns.jsonl',
+            output_path='sv_nouns_top500.jsonl',
             blacklist_path='./data/top500_sv_nouns_blacklist.txt',
             limit=500)
-    # generate_top_entries(
-    #         lang_code='sh',
-    #         input_jsonl_path='./data/sh.jsonl',
-    #         output_path='top500_sh_nouns.jsonl',
-    #         blacklist_path='./data/top500_sv_nouns_blacklist.txt',
-    #         limit=500)
+    generate_top_entries(
+            lang_code='sh',
+            input_jsonl_path='./data/sh.jsonl',
+            output_path='sh_nouns_top500.jsonl',
+            blacklist_path='N/A',
+            limit=500)

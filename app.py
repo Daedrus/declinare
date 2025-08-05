@@ -12,9 +12,24 @@ if not app.secret_key and __name__ == "__main__":
     sys.exit(1)
 
 LANG_FILES = {
-    "sv": {"name": "Swedish", "file": "data/sv_nouns.jsonl", "lines": 37484},
-    "ro": {"name": "Romanian", "file": "data/ro_nouns.jsonl", "lines": 55167},
-    "sh": {"name": "Serbo-Croatian", "file": "data/sh_nouns.jsonl", "lines": 16107}
+    "sv": {
+        "name": "Swedish",
+        "file": "data/sv_nouns.jsonl",
+        "lines": 37484,
+        "top500_path": "data/sv_nouns_top500.jsonl"
+    },
+    "ro": {
+        "name": "Romanian",
+        "file": "data/ro_nouns.jsonl",
+        "lines": 55167,
+        "top500_path": "data/ro_nouns_top500.jsonl"
+    },
+    "sh": {
+        "name": "Serbo-Croatian",
+        "file": "data/sh_nouns.jsonl",
+        "lines": 16107,
+        "top500_path": "data/sh_nouns_top500.jsonl"
+    },
 }
 
 def get_valid_declensions(entry):
@@ -34,13 +49,17 @@ def get_senses(entry):
         for sense in entry.get("senses", [])
     ))
 
-def get_random_noun_entry(lang_code, max_tries=50):
+def get_random_noun_entry(lang_code, use_top500, max_tries=50):
     info = LANG_FILES.get(lang_code)
     if not info:
         return None, []
 
-    file_path = info["file"]
-    total_lines = info["lines"]
+    if use_top500:
+        file_path = info["top500_path"]
+        total_lines = 500
+    else:
+        file_path = info["file"]
+        total_lines = info["lines"]
 
     for attempt in range(max_tries):
         line_num = random.randint(0, total_lines - 1)
@@ -76,7 +95,17 @@ def quiz():
     else:
         session["lang"] = current_lang
 
-    entry, declensions = get_random_noun_entry(session["lang"])
+    # If use_top500 flag changes, reset the streak
+    new_use_top500 = request.args.get("top500") == "on"
+    current_use_top500 = session.get("top500", False)
+
+    if new_use_top500 != current_use_top500:
+        session["top500"] = new_use_top500
+        session["streak"] = 0
+    else:
+        session["top500"] = current_use_top500
+
+    entry, declensions = get_random_noun_entry(session["lang"], session["top500"])
     if not entry or not declensions:
         return "No valid entry found", 500
 
@@ -98,6 +127,7 @@ def quiz():
         senses=", ".join(senses),
         feedback=False,
         selected_lang=session["lang"],
+        top500=session["top500"],
         languages=LANG_FILES,
         streak=session.get("streak", 0)
     )
@@ -133,6 +163,7 @@ def submit_answer():
         user_answer=user_answer,
         wiktionary_url=wiktionary_url,
         selected_lang=session.get('lang', 'sv'),
+        top500=session.get('top500', False),
         languages=LANG_FILES,
         streak=session.get("streak", 0)
     )
