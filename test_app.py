@@ -45,6 +45,19 @@ def test_correct_answers_set_streak(client):
     with client.session_transaction() as sess:
         assert sess["streak"] == 2
 
+def test_streak_resets_on_top500_selection(client):
+    # Load quiz
+    client.get("/quiz")
+    with client.session_transaction() as sess:
+        sess["lang"] = "sv"
+        sess["streak"] = 5
+        sess["top500"] = False
+
+    client.get("/quiz?lang=sv&top500=on")
+    with client.session_transaction() as sess:
+        assert sess["streak"] == 0
+        assert sess["top500"] is True
+
 def test_streak_resets_on_wrong_answer(client):
     # Load quiz
     client.get("/quiz")
