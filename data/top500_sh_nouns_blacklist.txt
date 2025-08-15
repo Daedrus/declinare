@@ -1,0 +1,20 @@
+kaka
+bilo
+treba
+# ljudi - plural of čovjek (why in list?)
+toga
+# Look into alternative forms, they are important for .sh, right now I am only keeping "declension" forms
+    {
+      "form": "vréme",
+      "tags": [
+        "alternative",
+        "Ekavian"
+      ]
+    },
+    {
+      "form": "vrime",
+      "tags": [
+        "alternative",
+        "Ikavian"
+      ]
+    }
