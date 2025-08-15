@@ -54,7 +54,6 @@ def split_by_pos(input_path, lang_code):
                         "lang_code": entry.get("lang_code"),
                         "pos": entry.get("pos"),
                         "forms": valid_forms,
-                        "head_templates": entry.get("head_templates", []),
                         "senses": [
                             {"glosses": sense.get("glosses", [])}
                             for sense in entry.get("senses", [])

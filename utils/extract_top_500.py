@@ -111,7 +111,6 @@ def load_filtered_entries(jsonl_path, blacklist):
                     form for form in entry.get("forms", [])
                     if not set(form.get("tags", [])) & EXCLUDED_TAGS
                 ],
-                "head_templates": entry.get("head_templates", []),
                 "senses": [
                     {"glosses": sense.get("glosses", [])}
                     for sense in entry.get("senses", [])
